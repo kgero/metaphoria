@@ -28,3 +28,6 @@ def get_more():
     data = get_template(suggestion, poetic, concrete)
     resp = Response(json.dumps(data), status=200, mimetype='application/json')
     return resp
+
+if __name__ == "__main__":
+    app.run()
