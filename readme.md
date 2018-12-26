@@ -7,5 +7,3 @@ Runs on python3. Install requirements using requirements.txt. Might need:
 Then to run:
 
 `flask run`
-
-`python -m spacy download en` for spacy usage

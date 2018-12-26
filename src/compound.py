@@ -1,10 +1,10 @@
-import spacy
+import nltk
 from src.embeddings import loadVectors
 from src.analysis import stop
 from src.badwords import isokay
 
 
-nlp = spacy.load('en_core_web_sm')
+nltk.download('averaged_perceptron_tagger')
 dep = loadVectors('data/deps.vectors.slim.txt')
 
 def get_obj(similar, sort, typeblank):
@@ -47,24 +47,25 @@ def get_template(suggestion, poetic, concrete):
         }
     }
     '''
-    doc = nlp(suggestion)
+    tokens = suggestion.split(' ')
+    doc = nltk.pos_tag(tokens)
 
     blanks = []
     verbs = []
     new_sen = []
     you = False
-    for token in doc:
-        if token.text == 'you':
+    for text, tag in doc:
+        if text == 'you':
             you = True
-            print("~{}~".format(token.text), end=' ')
-        elif token.pos_ == 'VERB' and token.text not in stop:
-            verbs.append(token.text)
-            print("-{}-".format(token.text), end=' ')
-        elif token.pos_ == 'NOUN' and token.text not in [concrete, poetic]:
-            blanks.append(token.text)
-            print("_{}_".format(token.text), end=' ')
+            print("~{}~".format(text), end=' ')
+        elif 'VB' in tag and text not in stop:
+            verbs.append(text)
+            print("-{}-".format(text), end=' ')
+        elif 'NN' in tag and text not in [concrete, poetic]:
+            blanks.append(text)
+            print("_{}_".format(text), end=' ')
         else:
-            print("{}".format(token.text), end=' ')
+            print("{}".format(text), end=' ')
     print('')
 
     template = {}
