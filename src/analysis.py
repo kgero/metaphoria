@@ -1,6 +1,7 @@
 import gensim
 import numpy as np
 import random
+import sys
 
 from nltk.corpus import wordnet as wn
 
@@ -13,9 +14,10 @@ def loadGlove(filepath):
     Return gensim word vectors.
     '''
     print("loading w2v from" + filepath + "...")
-    model = gensim.models.KeyedVectors.load_word2vec_format(filepath, limit=40000)
-    word_vectors = model.wv
-    del model
+    word_vectors = gensim.models.KeyedVectors.load_word2vec_format(filepath, limit=40000)
+    # print("model...", model)
+    # word_vectors = model.wv
+    # del model
     print("ready")
     return word_vectors
 
@@ -33,7 +35,7 @@ def loadValence(filepath):
 
 def in_vocab(word):
     '''Return true if word in vocab of glove; else return false.'''
-    return word in vectors.vocab
+    return word in vectors.key_to_index
 
 
 def prepSen(sen):
@@ -42,7 +44,7 @@ def prepSen(sen):
     '''
     prep = [w.strip(',') for w in sen.lower().split() if w not in stop]
     for w in prep:
-        if w not in vectors.vocab:
+        if w not in vectors.key_to_index:
             # print('\"{}\" from \"{}\" not in glove'.format(w, sen))
             return []
     return prep
@@ -104,7 +106,7 @@ def select_top(sentences, poetic, num=10, reverse=False):
             p1 = [p for p in prepSen(sen) if p != poetic][:-1] # NAIVE!! TRYING TO GET RID OF CONCRETE WORD
             p2 = [p for p in prepSen(potential) if p != poetic][:-1] # NAIVE!! TRYING TO GET RID OF CONCRETE WORD
             d = vectors.wmdistance(p1, p2)
-            if d < 4:
+            if d < .8:
                 add = False
         if add:
             top.append(potential)
