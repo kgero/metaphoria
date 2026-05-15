@@ -1,6 +1,8 @@
 .DS_Store
 env/
 data/
+conceptnet/conceptnet-assertions-5.7.0.csv.gz
+metaphoria-data.zip
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
