@@ -15,10 +15,10 @@ def loadVectors(filepath, loadall=False):
     '''
     print("loading "+filepath+"...")
     if loadall:
-        model = gensim.models.KeyedVectors.load_word2vec_format(filepath) 
+        word_vectors = gensim.models.KeyedVectors.load_word2vec_format(filepath) 
     else:
-        model = gensim.models.KeyedVectors.load_word2vec_format(filepath, limit=40000) 
-    word_vectors = model.wv
-    del model
+        word_vectors = gensim.models.KeyedVectors.load_word2vec_format(filepath, limit=40000) 
+    # word_vectors = model.wv
+    # del model
     print("ready")
     return word_vectors
