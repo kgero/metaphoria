@@ -1,6 +1,6 @@
 import random
 
-from src.expand_source_cnet import get_cnet_rel
+from src.cnet_local import get_cnet_rel
 from src.analysis import select_top, order_valence, in_vocab
 
 
