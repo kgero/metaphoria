@@ -55,3 +55,58 @@ It takes a few seconds to load in the vectors
 You can also run it in debug mode:
 
 `flask run --debug`
+
+## Remote server setup
+
+The information below is for running the web app on a remote server.
+
+### How this app is served
+
+```
+Browser → nginx → uWSGI socket → Flask (server.py)
+```
+
+nginx receives all traffic for the domain. It reads the path and forwards
+`/metaphoria` requests to this app via a Unix socket. uWSGI runs the
+Flask app as a persistent process, kept alive by systemd.
+
+### Relevant files in this repo
+
+**`metaphoria.ini`** — uWSGI config. Tells uWSGI how to run the app:
+how many processes, where to put the socket, and what path to mount at.
+
+**`server_setup.sh`** — Run once on a fresh server after cloning. It:
+1. Creates a Python virtualenv and installs `requirements.txt`
+2. Writes a systemd `.service` file to `/etc/systemd/system/`
+3. Enables and starts the service
+
+
+### First-time setup on a new server
+
+1. Clone the github repo.
+2. Download the word vector files for `/data` (they're not in the github repo; see above). 
+3. Run `bash server_setup.sh`.
+
+
+### Wiring to nginx
+
+nginx config lives centrally on the server (not in this repo) because it
+covers multiple apps running on the domain at once. After running `server_setup.sh`, add these
+blocks to the nginx server config:
+
+```nginx
+location /metaphoria {
+    include uwsgi_params;
+    uwsgi_pass unix:/home/username/metaphoria/metaphoria.sock;
+}
+```
+
+This should be a `.conf` file in `/etc/nginx/sites-available/`
+
+Then reload nginx:
+
+```bash
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+[This tutorial](https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uswgi-and-nginx-on-ubuntu-18-04) might help.
