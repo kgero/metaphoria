@@ -44,7 +44,7 @@ def get_cnet_rel(noun):
         '/r/CapableOf': {'text': 'capable of', 'start': 'is '},
     }
     for q in queries:
-        obj = requests.get('http://api.conceptnet.io/query', params=q).json()
+        obj = requests.get('https://api.conceptnet.io/query', params=q).json()
 
         for e in obj['edges']:
             if 'start' in q:
